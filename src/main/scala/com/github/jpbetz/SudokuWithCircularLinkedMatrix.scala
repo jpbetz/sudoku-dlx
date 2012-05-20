@@ -2,16 +2,12 @@ package com.github.jpbetz
 
 object SudokuWithCircularLinkedMatrix {
   
-  /*def read(text :String) = {
-    val r = """(\|| )""".r
-    for(line <- text.lines) {
-      if(line.startsWith("+")) {
-        
-      } else {
-        line.split(r)
-      }
+  def read(text :String) = {
+    val result = for(line <- text.lines if line.startsWith("|")) yield {
+        line.trim().split("""[\| ]+""").filter(_ != "").map{n => if(n == "_") {"0"} else {n}}.map{_.toInt}
     }
-  }*/
+    result.toArray[Array[Int]]
+  }
   
   def prettyPrint(sudoku : Array[Array[Int]]) {
     
@@ -38,7 +34,10 @@ object SudokuWithCircularLinkedMatrix {
   }
   
   def printLine(line : Array[Int]) = {
-    printf("| %s %s %s | %s %s %s | %s %s %s |\n", line(0), line(1), line(2), line(3), line(4), line(5), line(6), line(7), line(8))
+    printf("| %s %s %s | %s %s %s | %s %s %s |\n", 
+           toCell(line(0)), toCell(line(1)), toCell(line(2)), 
+           toCell(line(3)), toCell(line(4)), toCell(line(5)),
+           toCell(line(6)), toCell(line(7)), toCell(line(8)))
   }
   
   def toCell(value: Int) = {

@@ -91,45 +91,7 @@ class TestSudoku extends FunSuite {
     
     val solver = new SudokuWithCircularLinkedMatrix(9)
     val solved = solver.solve(puzzle)
-    prettyPrint(solved)
-  }
-  
-  def prettyPrint(sudoku : Array[Array[Int]]) {
-    
-    println()
-    printSplitter()
-    for(i <- 0 to 2) {
-      printLine(sudoku(i))
-    }
-    
-    printSplitter()
-    for(i <- 3 to 5) {
-      printLine(sudoku(i))
-    }
-    
-    printSplitter()
-    for(i <- 6 to 8) {
-      printLine(sudoku(i))
-    }
-    
-    printSplitter()
-    println()
-  }
-  
-  def printSplitter() = {
-    printf("+-------+-------+-------+\n")
-  }
-  
-  def printLine(line : Array[Int]) = {
-    printf("| %s %s %s | %s %s %s | %s %s %s |\n", line(0), line(1), line(2), line(3), line(4), line(5), line(6), line(7), line(8))
-  }
-  
-  def toCell(value: Int) = {
-    if(value == 0) {
-      "_"
-    } else {
-      value.toString
-    }
+    SudokuWithCircularLinkedMatrix.prettyPrint(solved)
   }
   
   /*@Test def testSudokuSolver() = {
