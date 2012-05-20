@@ -1,0 +1,86 @@
+package com.github.jpbetz
+
+class Node(val rowId: Int) {
+  
+  var up: Node = this
+  var down: Node = this
+  var left: Node = this
+  var right: Node = this
+  
+  def searchDown(searchRowId: Int) : Node {
+    var node = this
+    var next = node.down
+    do {
+      if(node.idx == searchRowId) return node
+    }
+    while(down != this)
+  }
+  
+  def cover() = {
+    right.left = left
+    left.right = right
+  }
+  
+  def uncover() = {
+    right.left = this
+    left.right = this
+  }
+
+  def addRight(node: Node) = {
+    node.right = right
+    node.left = this
+    
+    right.left = node
+    right = node
+    
+  }
+  
+  def addDown(node: Node) = {
+    node.down = down
+    node.up = this
+    
+    down.up = node
+    down = node
+  }
+}
+
+class Header(val id: Int) extends Node(-1) {
+}
+
+class CircularLinkedMatrix() {
+  
+  val root: Header = new Header(-1)
+  
+  def this(matrix: Array[Array[Int]]) = {
+    this()
+    root.left = root
+    root.right = root
+    
+    val rowCount = matrix.size-1
+    val colCount = matrix(0).size-1
+    
+    var prevHeader = root
+    for(c <- 0 to colCount) {
+      val header = new Header(c)
+      prevHeader.addRight(header)
+      prevHeader = header
+    }
+    
+    var header = root
+    for(r <- 0 to rowCount) {
+      var prev :Option[Node] = None
+      for(c <- 0 to colCount) {
+        header = header.right.asInstanceOf[Header]
+        if(matrix(r)(c) == 1) {
+          val node = new Node(r)
+          header.addDown(node)
+          if(prev.isDefined) {
+            prev.get.addRight(node)
+          }
+          
+          prev = Option(node)
+        }
+      }
+    }
+  } 
+}
