@@ -11,16 +11,16 @@ To setup:
 
 Add this to your bash profile:
 
-  export SUDOKU_HOME=<path-to-sudoku-dlx>
-  export PATH=$PATH:$SUDOKU_HOME/cli-bin
+    export SUDOKU_HOME=<path-to-sudoku-dlx>
+    export PATH=$PATH:$SUDOKU_HOME/cli-bin
 
 and then run:
 
-  $ sbt
-  sbt> assembly
-  sbt> exit
+    $ sbt
+    sbt> assembly
+    sbt> exit
 
 
 To build run:
 
-  sudoku solve examples/puzzle1.txt
+    sudoku solve examples/puzzle1.txt
