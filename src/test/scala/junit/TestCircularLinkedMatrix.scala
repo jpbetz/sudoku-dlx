@@ -1,10 +1,8 @@
 package junit
 
 import org.scalatest.FunSuite
-
-import com.github.jpbetz.Matrix
 import com.github.jpbetz.CircularLinkedMatrix
-import com.github.jpbetz.Header
+import com.github.jpbetz._
 
 class TestCircularLinkedMatrix extends FunSuite {
   
@@ -19,15 +17,26 @@ class TestCircularLinkedMatrix extends FunSuite {
     println(matrix.toString())
   }
   
+  test("all nodes in row") {
+    println("all nodes in row: ")
+    var node1 = new Node(1) 
+    var node2 = new Node(2) 
+    var node3 = new Node(3)
+    
+    node1.right = node2
+    node2.right = node3
+    node3.right = node1
+    
+    println(node1.allNodesInRow().toList.mkString(","))
+  }
+  
    test("testBuildMatrixFromMatrix") {
-    val m = new Matrix(Array(
-          Array(1,0,0,1),
-          Array(1,1,0,1),
-          Array(0,1,0,1))
+    val rows = Map(
+          1 -> new Row(1, Array(1,0,0,1)),
+          2 -> new Row(2, Array(1,1,0,1)),
+          3 -> new Row(3, Array(0,1,0,1))
     )
     
-    var rows = m.rows
-          
     var matrix = new CircularLinkedMatrix(rows)
     println(matrix.toString())
     

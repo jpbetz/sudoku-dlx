@@ -17,6 +17,11 @@ object DLX {
     result
   }
 
+  /**
+   * Part of the recursive solver.
+   * 
+   * For the given matrix, finds a column containing the fewest rows and searches for a solution involving those rows. 
+   */
   def solve(matrix: CircularLinkedMatrix, rowIds: List[Int]): Result = {
     val incompleteColumns = findUnfilledColumns(matrix)
     if (matrix.isEmpty) {
@@ -32,10 +37,15 @@ object DLX {
     }
   }
   
+  /**
+   * Part of the recursive solver.
+   * 
+   * For the given column, finds all rows that have an entry for the column.  For each of these rows,
+   * attempts to remove the row, and recursively solves the matrix with that row removed, searching for a solution.
+   * If any row removal results in a solved matrix, returns the solution, else returns a false result.
+   */
   def removeRows(header: Header, matrix: CircularLinkedMatrix, rowIds: List[Int]) : Result = {
-    var node : Node = header
-    while(node.down != header) {
-      node = node.down
+    for(node <- header.nodes()) {
       val headers = removeRow(node)
       val result = solve(matrix, node.rowId :: rowIds)
       if(result.success == true) {
@@ -46,37 +56,27 @@ object DLX {
     return new Result(false, Nil)
   }
   
+  /**
+   * Hides an entire row, transitively removing all columns with an entry for that row, and also all other rows
+   * where those columns also have a entry.
+   */
   def removeRow(anchor: Node) = {
-    var headers = List[Header](anchor.getHeader()) 
-    var node = anchor
-    while(node.right != anchor) {
-      headers = node.right.getHeader() :: headers
-      node = node.right
-    }
-    for(header <- headers) {
-      header.coverColumn()
-    }
+    val headers = anchor.allNodesInRow().map(_.getHeader()).toList
+    headers.foreach(_.coverColumn())
     headers
   }
   
+  /**
+   * Reverses a removeRow operation
+   */
   def backtrackRow(headers : List[Header]) {
-    for(header <- headers) {
-      header.uncoverColumn()
-    }
+    headers.foreach(_.uncoverColumn())
   }
   
+  /**
+   * Finds all columns with entries, sorted by columns with the least entries first.
+   */
   def findUnfilledColumns(matrix: CircularLinkedMatrix) : List[Header] = {
-    var header = matrix.root
-    
-    var results : List[Header] = Nil
-    
-    var minColHeader = None
-    while(header.right != matrix.root) {
-      header = header.right.asInstanceOf[Header]
-      if(header.size() > 0) {
-        results = header :: results
-      }
-    }
-    results.sortBy{_.size()}
+    matrix.headers().filter(_.size() > 0).toList.sortBy(_.size())
   }
 }

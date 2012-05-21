@@ -2,7 +2,6 @@ package junit
 
 import org.scalatest.FunSuite
 
-import com.github.jpbetz.Matrix
 import com.github.jpbetz.SudokuWithCircularLinkedMatrix
 
 class TestSudoku extends FunSuite {

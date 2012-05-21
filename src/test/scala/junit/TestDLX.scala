@@ -3,7 +3,6 @@ package junit
 import org.scalatest.FunSuite
 
 import com.github.jpbetz.DLX
-import com.github.jpbetz.Matrix
 import com.github.jpbetz.CircularLinkedMatrix
 
 class TestDLX extends FunSuite {

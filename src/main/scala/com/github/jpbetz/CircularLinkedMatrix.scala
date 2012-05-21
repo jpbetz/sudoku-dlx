@@ -1,5 +1,14 @@
 package com.github.jpbetz
 
+// Note about immutability:
+// The data-structure used here is designed for it's ability to be modified temporarily to check a test space
+// and then backtrack efficiently back to the pre-modified state.  As there is tons of mutation going on, this
+// implementation uses a lot of scala "vars", this is entirely intentional.  A solution using immutable
+// data structures would be very interesting but would need to be designed entirely differently.
+
+// TODO:  the node references used by Node and Header should be encapsulated such that an alternative "Matrix"
+// implementation could easily be written and swapped in to replace this one.
+
 /**
  * Node in a CircularLinkedMatrix.
  */
@@ -87,6 +96,15 @@ class Node(val rowId: Int) {
     down = node
   }
   
+  def allNodesInRow() = {
+    var node = this
+    def next() = {
+      node = node.right
+      node
+    }
+    Iterator.single(node).append(Iterator.continually(next()) takeWhile(_ != this))
+  }
+  
   override def toString() = {
     "Node(" + rowId + ")"
   }
@@ -136,6 +154,15 @@ class Header(val id: Int) extends Node(-1) {
     this.uncoverHoriz()
   }
   
+  def nodes() = {
+    var node = this.asInstanceOf[Node]
+    def next() = {
+      node = node.down
+      node
+    }
+    Iterator.continually(next()) takeWhile(_ != this)
+  }
+  
   override def toString() = {
     "Header(" + id + ")"
   }
@@ -149,6 +176,15 @@ class Header(val id: Int) extends Node(-1) {
 class CircularLinkedMatrix {
   
   val root: Header = new Header(-1)
+  
+  def headers() = {
+    var header = root
+    def next() = {
+      header = header.right.asInstanceOf[Header]
+      header
+    }
+    Iterator.continually(next()) takeWhile(_ != root)
+  }
   
   def this(rowsIn: Map[Int, Row]) = {
     this()
@@ -246,4 +282,23 @@ class CircularLinkedMatrix {
     
     result
   }
+}
+
+
+/**
+ * Utility class for help in constructing a matrix.
+ */
+class Row(indexIn: Int, cellsIn: Array[Int]) {
+  val idx = indexIn
+  val cells = cellsIn
+
+  def apply(idx: Int) {
+    cells(idx)
+  }
+
+  override def toString() = {
+    "(" + idx + " -> " + cells.mkString(", ") + ")"
+  }
+
+  def size = cells.length
 }
