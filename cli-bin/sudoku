@@ -1,5 +1,7 @@
 #!/bin/bash
-scala -cp $SUDOKU_HOME/target/scala-2.9.1/classes \
+# 
+# $SUDOKU_HOME/target/scala-2.9.1/classes
+scala -cp $SUDOKU_HOME/target/sudoku-assembly-1.0-SNAPSHOT.jar \
   $SUDOKU_OPTS \
   com.github.jpbetz.SudokuCLI \
   "$@"

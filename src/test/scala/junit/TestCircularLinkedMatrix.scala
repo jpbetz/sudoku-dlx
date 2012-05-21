@@ -2,9 +2,7 @@ package junit
 
 import org.scalatest.FunSuite
 
-import com.github.jpbetz.AlgorithmX
 import com.github.jpbetz.Matrix
-import com.github.jpbetz.Sudoku
 import com.github.jpbetz.CircularLinkedMatrix
 import com.github.jpbetz.Header
 

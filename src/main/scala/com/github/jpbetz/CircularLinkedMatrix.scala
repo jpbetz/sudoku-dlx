@@ -1,5 +1,8 @@
 package com.github.jpbetz
 
+/**
+ * Node in a CircularLinkedMatrix.
+ */
 class Node(val rowId: Int) {
   
   var up: Node = this
@@ -54,8 +57,6 @@ class Node(val rowId: Int) {
     var node = anchor
     while(node.right != anchor) {
       node.right.coverVert()
-      //val header = node.right.getHeader()
-      //if(header.size() == 0) header.coverHoriz()
       node = node.right
     }
     
@@ -65,8 +66,6 @@ class Node(val rowId: Int) {
     var node = anchor
     while(node.right != anchor) {
       node.right.uncoverVert()
-      //val header = node.right.getHeader()
-      //header.uncoverHoriz()
       node = node.right
     }
   }
@@ -93,6 +92,9 @@ class Node(val rowId: Int) {
   }
 }
 
+/**
+ * Header in a CircularLinkedMatrix.
+ */
 class Header(val id: Int) extends Node(-1) {
   def searchRight(searchHeaderId: Int) : Option[Node] = {
 
@@ -118,7 +120,6 @@ class Header(val id: Int) extends Node(-1) {
   def coverColumn() = {
     var node = this.down
     while(node != this) {
-      //println("  covering row: " + node.rowId)
       coverRow(node)
       node = node.down
     }
@@ -140,6 +141,11 @@ class Header(val id: Int) extends Node(-1) {
   }
 }
 
+/**
+ * A sparse matrix represented by a circular linked list of headers each containing a circular list of nodes.
+ * 
+ * Think of it as a torus, with the headers as a circle on the top of the torus and the nodes wrapping around.
+ */
 class CircularLinkedMatrix {
   
   val root: Header = new Header(-1)
@@ -153,10 +159,8 @@ class CircularLinkedMatrix {
     val iter = rows.iterator
     val colCount = iter.next()._2.size-1
     
-    //println("rowCount: " + rowCount + ", colCount: " + colCount)
     var prevHeader = root
     for(c <- 0 to colCount) {
-      //println("h: " + c)
       val header = new Header(c)
       prevHeader.addRight(header)
       prevHeader = header
@@ -166,14 +170,11 @@ class CircularLinkedMatrix {
     for(row <- rows) {
       var header = root
       val rawRow = row._2
-      //println("r: " + rawRow.idx)
       var prev :Option[Node] = None
       for(c <- 0 to colCount) {
-        //println("c: " + c)
         header = header.right.asInstanceOf[Header]
         if(rawRow.cells(c) == 1) {
           val node = new Node(rawRow.idx)
-          //println("adding " + node + " below " + header.up)
           header.up.addDown(node)
           if(prev.isDefined) {
             prev.get.addRight(node)
@@ -191,10 +192,8 @@ class CircularLinkedMatrix {
     val rowCount = matrix.size-1
     val colCount = matrix(0).size-1
     
-    //println("rowCount: " + rowCount + ", colCount: " + colCount)
     var prevHeader = root
     for(c <- 0 to colCount) {
-      //println("h: " + c)
       val header = new Header(c)
       prevHeader.addRight(header)
       prevHeader = header
@@ -203,14 +202,11 @@ class CircularLinkedMatrix {
     
     for(r <- 0 to rowCount) {
       var header = root
-      //println("r: " + r)
       var prev :Option[Node] = None
       for(c <- 0 to colCount) {
-        //println("c: " + c)
         header = header.right.asInstanceOf[Header]
         if(matrix(r)(c) == 1) {
           val node = new Node(r)
-          //println("adding " + node + " below " + header.up)
           header.up.addDown(node)
           if(prev.isDefined) {
             prev.get.addRight(node)
@@ -224,12 +220,6 @@ class CircularLinkedMatrix {
   
   def isEmpty() : Boolean = {
     root == root.right
-    /*var header: Node = root
-    while(header.right != root) {
-      header = header.right
-      if(header.down != header) return false
-    }
-    return true*/
   }
   
   override def toString() : String = {

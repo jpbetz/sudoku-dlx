@@ -1,13 +1,72 @@
 package com.github.jpbetz
 
-class Sudoku(sizeIn: Int) {
+/**
+ * Glue code that converts an incomplete sudoku board into a exact cover matrix, runs 
+ * it through DLX, and converts the result back into a sudoku board.
+ */
+object SudokuWithCircularLinkedMatrix {
+  
+  def read(text :String) = {
+    val result = for(line <- text.lines if line.startsWith("|")) yield {
+        line.trim().split("""[\| ]+""").filter(_ != "").map{n => if(n == "_") {"0"} else {n}}.map{_.toInt}
+    }
+    result.toArray[Array[Int]]
+  }
+  
+  def prettyPrint(sudoku : Array[Array[Int]]) {
+    
+    printSplitter()
+    for(i <- 0 to 2) {
+      printLine(sudoku(i))
+    }
+    
+    printSplitter()
+    for(i <- 3 to 5) {
+      printLine(sudoku(i))
+    }
+    
+    printSplitter()
+    for(i <- 6 to 8) {
+      printLine(sudoku(i))
+    }
+    
+    printSplitter()
+  }
+  
+  def printSplitter() = {
+    printf("+-------+-------+-------+\n")
+  }
+  
+  def printLine(line : Array[Int]) = {
+    printf("| %s %s %s | %s %s %s | %s %s %s |\n", 
+           toCell(line(0)), toCell(line(1)), toCell(line(2)), 
+           toCell(line(3)), toCell(line(4)), toCell(line(5)),
+           toCell(line(6)), toCell(line(7)), toCell(line(8)))
+  }
+  
+  def toCell(value: Int) = {
+    if(value == 0) {
+      "_"
+    } else {
+      value.toString
+    }
+  }
+}
+
+class SudokuWithCircularLinkedMatrix(sizeIn: Int) {
   val size = sizeIn
   val parts : Int = Math.sqrt(size).toInt
   
   def solve(puzzle : Array[Array[Int]]) = {
     val matrix = convertPuzzleToConstraintMatrix(puzzle)
-    val solvedMatrix = AlgorithmX.solve(matrix)
-    convertSolvedMatrixToPuzzle(solvedMatrix)
+    val result = DLX.solve(matrix)
+    if(result.success)
+    {
+      convertSolvedMatrixToPuzzle(result.rowIds)
+    }
+    else {
+      throw new RuntimeException("no valid solutions exist")
+    }
   }
   
   // constrained array column structure: (9*9*4 columns total)
@@ -23,17 +82,11 @@ class Sudoku(sizeIn: Int) {
   
   def convertPuzzleToConstraintMatrix(puzzle : Array[Array[Int]]) = {
     if(size != puzzle.size) throw new RuntimeException("puzzle size does not match solver configured size")
-    
     var rows = List[Row]()
-    //val a = Array.ofDim[Int](size*size*size, size*size*4)
-    
-    //println("done adding row-column conditions")
-    //println("adding conditions for all cells")
     for(r <- 0 to size-1) {
       for (c <- 0 to size-1) {
         val b = getBoxForRowColumn(r,c)
         val constrainedNumber = puzzle(r)(c)
-        //println("adding conditions for " + r + ":" + c)
         if(constrainedNumber > 0) {
           // add constraints for number
           val constraintRow = createConstraintRow(r,c,constrainedNumber)
@@ -55,15 +108,12 @@ class Sudoku(sizeIn: Int) {
       }
     }
     
-    new Matrix(rows.map{ row => (row.idx, row)}.toMap)
+    new CircularLinkedMatrix(rows.map{ row => (row.idx, row)}.toMap)
   }
   
   def getBoxForRowColumn(r: Int, c: Int) = {
-    //(((r+1) / parts)-1)*parts + (((c+1) / parts)-1)
-    //println("r: " + r + " c: " + c + " size: " + size + " parts: " + parts)
     val row = (r / parts)
     val col = (c / parts)
-    //println("row: " + row + " col: " + col)
     row*parts + col
   }
   
@@ -91,7 +141,6 @@ class Sudoku(sizeIn: Int) {
   }
   
   def addColumnNumberConstraint(constraintRow: Row, puzzleColumn: Int, number: Int) = {
-    //println("column size: " + constraintRow.cells.size)
     constraintRow.cells(2*size*size + size*puzzleColumn + (number-1)) = 1
   }
   
@@ -99,19 +148,15 @@ class Sudoku(sizeIn: Int) {
     constraintRow.cells(3*size*size + size*puzzleBox + (number-1)) = 1
   }
   
-  def convertSolvedMatrixToPuzzle(matrix: Matrix) = {
+  def convertSolvedMatrixToPuzzle(rowIds: List[Int]) = {
     val a = Array.ofDim[Int](size,size)
-    for(row <- matrix.rows) {
-      val id = row._1
-      val rowArray = row._2
-      
+    for(id <- rowIds) {
       val r = id / (size*size)
       val c = (id % (size*size)) / size 
       val n = (id % (size*size)) % size
       
       a(r)(c) = n+1
     }
-    
     a
   }
 }

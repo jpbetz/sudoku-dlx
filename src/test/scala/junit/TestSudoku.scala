@@ -2,30 +2,10 @@ package junit
 
 import org.scalatest.FunSuite
 
-import com.github.jpbetz.AlgorithmX
 import com.github.jpbetz.Matrix
-import com.github.jpbetz.Sudoku
 import com.github.jpbetz.SudokuWithCircularLinkedMatrix
 
 class TestSudoku extends FunSuite {
-  
-  /*@Test def testGetBoxForRowColumn() = {
-    
-    val correct = Array(
-      Array(0, 0, 1, 1),
-      Array(0, 0, 1, 1),
-      Array(2, 2, 3, 3),
-      Array(2, 2, 3, 3)
-    )
-    
-    val solver = new Sudoku(4)
-    for(i <- 0 to 3) {
-      for (j <- 0 to 3) {
-        assertEquals(solver.getBoxForRowColumn(i,j), correct(i)(j))
-      }
-    }
-    ()
-  }*/
     
   test("testSudokuSolver_Large") {
     // easy
@@ -94,7 +74,7 @@ class TestSudoku extends FunSuite {
     SudokuWithCircularLinkedMatrix.prettyPrint(solved)
   }
   
-  /*@Test def testSudokuSolver() = {
+  test("testSudokuSolver") {
     val puzzle = Array(
             Array(1,2,  4,3),
             Array(0,4,  2,0),
@@ -116,8 +96,8 @@ class TestSudoku extends FunSuite {
     
     for(i <- 0 to 3) {
       for(j <- 0 to 3) {
-        assertEquals(solved(i)(j), correct(i)(j))
+        assert(solved(i)(j) == correct(i)(j))
       }
     }
-  }*/
+  }
 }
