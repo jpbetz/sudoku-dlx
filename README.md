@@ -7,20 +7,20 @@ Solver maps a sudoku board to an [exact cover](http://en.wikipedia.org/wiki/Exac
 
 Requires scala and sbt.
 
-To setup:
+To build and install:
 
 Add this to your bash profile:
 
     export SUDOKU_HOME=<path-to-sudoku-dlx>
     export PATH=$PATH:$SUDOKU_HOME/cli-bin
 
-and then run:
+..and then do:
 
     $ sbt
     sbt> assembly
     sbt> exit
 
 
-To build run:
+To run:
 
     sudoku solve examples/puzzle1.txt
