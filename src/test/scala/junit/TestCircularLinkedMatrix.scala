@@ -1,7 +1,7 @@
 package junit
 
 import org.scalatest.FunSuite
-import com.github.jpbetz.CircularLinkedMatrix
+import com.github.jpbetz.algorithmx.dancinglinks._
 import com.github.jpbetz._
 
 class TestCircularLinkedMatrix extends FunSuite {

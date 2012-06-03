@@ -1,4 +1,4 @@
-package com.github.jpbetz
+package com.github.jpbetz.algorithmx
 
 /**
  * Simple data type representing a DLX execution result.
@@ -6,11 +6,11 @@ package com.github.jpbetz
 case class Result(val success: Boolean, val rowIds: List[Int])
 
 /**
- * Dancing Links implementation of Knuth's algorithm X.
+ * Knuth's algorithm X.
  * 
  * Suitable for solving some exact cover problems such as sudoku.
  */
-object DLX {
+object AlgorithmX {
   
   def solve(matrix: ExactCoverMatrix): Result = {
     val result = solve(matrix, Nil)

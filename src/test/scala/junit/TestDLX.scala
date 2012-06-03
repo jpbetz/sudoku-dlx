@@ -1,9 +1,9 @@
-package junit
+package com.github.jpbetz.sudoku.junit
 
 import org.scalatest.FunSuite
 
-import com.github.jpbetz.DLX
-import com.github.jpbetz.CircularLinkedMatrix
+import com.github.jpbetz.algorithmx._
+import com.github.jpbetz.algorithmx.dancinglinks._
 
 class TestDLX extends FunSuite {
   test("testDLX") {
@@ -22,7 +22,7 @@ class TestDLX extends FunSuite {
    // (3,(3 -> 0, 0, 1, 0, 1, 1, 0))
    // (5,(5 -> 0, 1, 0, 0, 0, 0, 1))
           
-    val solution = DLX.solve(matrix)
+    val solution = AlgorithmX.solve(matrix)
     println(solution.success)
     println(solution.rowIds)
     for(rowId <- solution.rowIds) {

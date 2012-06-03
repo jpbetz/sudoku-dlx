@@ -1,6 +1,9 @@
-package com.github.jpbetz
+package com.github.jpbetz.algorithmx.dancinglinks
+
+import com.github.jpbetz.algorithmx.{ExactCoverMatrix,Column,Node}
 
 // Note about immutability:
+
 // The data-structure used here is designed for it's ability to be modified temporarily to check a test space
 // and then backtrack efficiently back to the pre-modified state.  As there is tons of mutation going on, this
 // implementation uses a lot of scala "vars", this is entirely intentional.  A solution using immutable
@@ -10,13 +13,12 @@ package com.github.jpbetz
 // implementation could easily be written and swapped in to replace this one.
 
 /**
- * Node in a CircularLinkedMatrix.
- */
-
-/**
- * A sparse matrix represented by a circular linked list of headers each containing a circular list of nodes.
+ * Implementation of the matrix described on Knuth's "Dancing Links" implementation of Algorithm X.  The point of
+ * this data structure is to make the removal and re-insertion of columns and rows in a sparse matrix cheap.  The
+ * re-insertion is needed for the backtracking, which Algorithm X does a lot of.
  * 
- * Think of it as a torus, with the headers as a circle on the top of the torus and the nodes wrapping around.
+ * The matrix's data structure a circular linked list of headers each containing a circular list of nodes. Think of 
+ * it as a torus, with the headers as a circle on the top of the torus and the nodes wrapping around.
  */
 class CircularLinkedMatrix extends ExactCoverMatrix {
   

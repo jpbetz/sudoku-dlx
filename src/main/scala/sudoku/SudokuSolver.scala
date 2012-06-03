@@ -1,65 +1,18 @@
-package com.github.jpbetz
+package com.github.jpbetz.sudoku
+
+import com.github.jpbetz.algorithmx.AlgorithmX
+import com.github.jpbetz.algorithmx.dancinglinks.{CircularLinkedMatrix,Row}
 
 /**
  * Glue code that converts an incomplete sudoku board into a exact cover matrix, runs 
  * it through DLX, and converts the result back into a sudoku board.
  */
-object SudokuWithCircularLinkedMatrix {
-  
-  def read(text :String) = {
-    val result = for(line <- text.lines if line.startsWith("|")) yield {
-        line.trim().split("""[\| ]+""").filter(_ != "").map{n => if(n == "_") {"0"} else {n}}.map{_.toInt}
-    }
-    result.toArray[Array[Int]]
-  }
-  
-  def prettyPrint(sudoku : Array[Array[Int]]) {
-    
-    printSplitter()
-    for(i <- 0 to 2) {
-      printLine(sudoku(i))
-    }
-    
-    printSplitter()
-    for(i <- 3 to 5) {
-      printLine(sudoku(i))
-    }
-    
-    printSplitter()
-    for(i <- 6 to 8) {
-      printLine(sudoku(i))
-    }
-    
-    printSplitter()
-  }
-  
-  private def printSplitter() = {
-    printf("+-------+-------+-------+\n")
-  }
-  
-  private def printLine(line : Array[Int]) = {
-    printf("| %s %s %s | %s %s %s | %s %s %s |\n", 
-           toCell(line(0)), toCell(line(1)), toCell(line(2)), 
-           toCell(line(3)), toCell(line(4)), toCell(line(5)),
-           toCell(line(6)), toCell(line(7)), toCell(line(8)))
-  }
-  
-  private def toCell(value: Int) = {
-    if(value == 0) {
-      "_"
-    } else {
-      value.toString
-    }
-  }
-}
-
-class SudokuWithCircularLinkedMatrix(sizeIn: Int) {
-  val size = sizeIn
-  val parts : Int = Math.sqrt(size).toInt
+class SudokuSolver(private val size: Int) {
+  private val parts : Int = Math.sqrt(size).toInt
   
   def solve(puzzle : Array[Array[Int]]) = {
     val matrix = convertPuzzleToConstraintMatrix(puzzle)
-    val result = DLX.solve(matrix)
+    val result = AlgorithmX.solve(matrix)
     if(result.success)
     {
       convertSolvedMatrixToPuzzle(result.rowIds)
@@ -80,7 +33,7 @@ class SudokuWithCircularLinkedMatrix(sizeIn: Int) {
   // R1C1#1, R1C1#2 ..., R1C1#9, R1C2#1, ... R1C2#9, ...., R1C9#1, ... R9C9#9
   // (9*9*9 columns total)
   
-  def convertPuzzleToConstraintMatrix(puzzle : Array[Array[Int]]) = {
+  private def convertPuzzleToConstraintMatrix(puzzle : Array[Array[Int]]) = {
     if(size != puzzle.size) throw new RuntimeException("puzzle size does not match solver configured size")
     var rows = List[Row]()
     for(r <- 0 to size-1) {
@@ -111,13 +64,13 @@ class SudokuWithCircularLinkedMatrix(sizeIn: Int) {
     new CircularLinkedMatrix(rows.map{ row => (row.idx, row)}.toMap)
   }
   
-  def getBoxForRowColumn(r: Int, c: Int) = {
+  private def getBoxForRowColumn(r: Int, c: Int) = {
     val row = (r / parts)
     val col = (c / parts)
     row*parts + col
   }
   
-  def createConstraintRow(puzzleRow: Int, puzzleColumn: Int, number: Int) = {
+  private def createConstraintRow(puzzleRow: Int, puzzleColumn: Int, number: Int) = {
     val rowId = puzzleRow*size*size+puzzleColumn*size+(number-1)
     val constraintRow = Array.ofDim[Int](size*size*4)
     val row = new Row(rowId, constraintRow)
@@ -126,29 +79,29 @@ class SudokuWithCircularLinkedMatrix(sizeIn: Int) {
     row
   }
   
-  def addNumberConstraint(constraintRow: Row, puzzleRow: Int, puzzleColumn: Int, puzzleBox: Int, number: Int) = {
+  private def addNumberConstraint(constraintRow: Row, puzzleRow: Int, puzzleColumn: Int, puzzleBox: Int, number: Int) = {
     addRowNumberConstraint(constraintRow, puzzleRow, number)
     addColumnNumberConstraint(constraintRow, puzzleColumn, number)
     addBoxNumberConstraint(constraintRow, puzzleBox, number)
   }
   
-  def addRowColumnCondition(constraintRow: Row, puzzleRow: Int, puzzleColumn: Int, number: Int) = {
+  private def addRowColumnCondition(constraintRow: Row, puzzleRow: Int, puzzleColumn: Int, number: Int) = {
     constraintRow.cells(0*size*size + size*puzzleRow + puzzleColumn) = 1
   }
   
-  def addRowNumberConstraint(constraintRow: Row, puzzleRow: Int, number: Int) = {
+  private def addRowNumberConstraint(constraintRow: Row, puzzleRow: Int, number: Int) = {
     constraintRow.cells(1*size*size + size*puzzleRow + (number-1)) = 1
   }
   
-  def addColumnNumberConstraint(constraintRow: Row, puzzleColumn: Int, number: Int) = {
+  private def addColumnNumberConstraint(constraintRow: Row, puzzleColumn: Int, number: Int) = {
     constraintRow.cells(2*size*size + size*puzzleColumn + (number-1)) = 1
   }
   
-  def addBoxNumberConstraint(constraintRow: Row, puzzleBox: Int, number: Int) = {
+  private def addBoxNumberConstraint(constraintRow: Row, puzzleBox: Int, number: Int) = {
     constraintRow.cells(3*size*size + size*puzzleBox + (number-1)) = 1
   }
   
-  def convertSolvedMatrixToPuzzle(rowIds: List[Int]) = {
+  private def convertSolvedMatrixToPuzzle(rowIds: List[Int]) = {
     val a = Array.ofDim[Int](size,size)
     for(id <- rowIds) {
       val r = id / (size*size)

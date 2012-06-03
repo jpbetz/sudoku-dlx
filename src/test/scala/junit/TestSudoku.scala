@@ -2,7 +2,8 @@ package junit
 
 import org.scalatest.FunSuite
 
-import com.github.jpbetz.SudokuWithCircularLinkedMatrix
+import com.github.jpbetz.sudoku.SudokuSolver
+import com.github.jpbetz.sudoku.BoardSerializer
 
 class TestSudoku extends FunSuite {
     
@@ -68,9 +69,9 @@ class TestSudoku extends FunSuite {
           Array(2,0,0, 0,0,0, 0,0,3)
     )*/
     
-    val solver = new SudokuWithCircularLinkedMatrix(9)
+    val solver = new SudokuSolver(9)
     val solved = solver.solve(puzzle)
-    SudokuWithCircularLinkedMatrix.prettyPrint(solved)
+    BoardSerializer.write(solved)
   }
   
   test("testSudokuSolver") {
@@ -82,7 +83,7 @@ class TestSudoku extends FunSuite {
             Array(2,1,  3,0)
     )
     
-    val solver = new SudokuWithCircularLinkedMatrix(4)
+    val solver = new SudokuSolver(4)
     val solved = solver.solve(puzzle)
     println(solved.deep.mkString("\n"))
 

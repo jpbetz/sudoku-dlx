@@ -1,4 +1,4 @@
-package com.github.jpbetz
+package com.github.jpbetz.sudoku
 import jpbetz.cli.CommandSet
 import jpbetz.cli.Command
 import jpbetz.cli.CommandContext
@@ -28,10 +28,10 @@ class Solve extends Command {
   
   override def exec(commandLine: CommandContext) = {
     val text = scala.io.Source.fromFile(file.getAbsolutePath()).mkString
-    val puzzle = SudokuWithCircularLinkedMatrix.read(text)
-    val solver = new SudokuWithCircularLinkedMatrix(9)
+    val puzzle = BoardSerializer.read(text)
+    val solver = new SudokuSolver(9)
     val solved = solver.solve(puzzle)
-    SudokuWithCircularLinkedMatrix.prettyPrint(solved)
+    BoardSerializer.write(solved)
   }
 }
 
@@ -40,6 +40,6 @@ class Empty extends Command {
   
   override def exec(commandLine: CommandContext) = {
     val example : Array[Array[Int]] = Array.ofDim(9,9)
-    SudokuWithCircularLinkedMatrix.prettyPrint(example)
+    BoardSerializer.write(example)
   }
 }
