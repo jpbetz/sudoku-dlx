@@ -33,18 +33,18 @@ object SudokuWithCircularLinkedMatrix {
     printSplitter()
   }
   
-  def printSplitter() = {
+  private def printSplitter() = {
     printf("+-------+-------+-------+\n")
   }
   
-  def printLine(line : Array[Int]) = {
+  private def printLine(line : Array[Int]) = {
     printf("| %s %s %s | %s %s %s | %s %s %s |\n", 
            toCell(line(0)), toCell(line(1)), toCell(line(2)), 
            toCell(line(3)), toCell(line(4)), toCell(line(5)),
            toCell(line(6)), toCell(line(7)), toCell(line(8)))
   }
   
-  def toCell(value: Int) = {
+  private def toCell(value: Int) = {
     if(value == 0) {
       "_"
     } else {

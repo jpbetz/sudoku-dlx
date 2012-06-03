@@ -19,9 +19,9 @@ class TestCircularLinkedMatrix extends FunSuite {
   
   test("all nodes in row") {
     println("all nodes in row: ")
-    var node1 = new Node(1) 
-    var node2 = new Node(2) 
-    var node3 = new Node(3)
+    var node1 = new LinkedMatrixNode(1) 
+    var node2 = new LinkedMatrixNode(2) 
+    var node3 = new LinkedMatrixNode(3)
     
     node1.right = node2
     node2.right = node3
@@ -42,7 +42,10 @@ class TestCircularLinkedMatrix extends FunSuite {
     
     val header = matrix.root.right.asInstanceOf[Header]
     val header2 = matrix.root.right.right.right.right.asInstanceOf[Header]
-    assert(header == header.down.down.getHeader())
+    val iter = header.nodes()
+    iter.next()
+    val node = iter.next()
+    assert(header == node.getColumn())
     
     header.coverColumn()
     
